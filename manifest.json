@@ -1,0 +1,24 @@
+{
+  "name": "Arabic Keyboard — لوحة المفاتيح العربية",
+  "short_name": "Arabic KB",
+  "description": "Arabic on-screen keyboard with full character set and diacritics",
+  "start_url": "./arabic-keyboard.html",
+  "display": "standalone",
+  "background_color": "#f7f8fa",
+  "theme_color": "#3354d4",
+  "orientation": "landscape-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

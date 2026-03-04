@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Arabic Keyboard — لوحة المفاتيح العربية</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#3354d4">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Arabic KB">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f8fa;
+    --white: #ffffff;
+    --keyboard-bg: #e8eaee;
+    --key-bg: #ffffff;
+    --key-hover: #f0f2ff;
+    --key-active: #dde0f0;
+    --key-special-bg: #d1d5df;
+    --key-special-hover: #c4c8d4;
+    --accent: #3354d4;
+    --accent-light: #eef1fd;
+    --accent2: #e8503a;
+    --text: #1c1e2e;
+    --text-mid: #4a4f6a;
+    --text-dim: #9399b8;
+    --border: #e0e3ee;
+    --shadow-key: 0 2px 0 #b0b5c8;
+    --shadow-key-hover: 0 3px 0 #9da3ba;
+    --shadow-key-press: 0 0px 0 #b0b5c8;
+    --radius: 8px;
+    --font: 'Tajawal', Arial, sans-serif;
+  }
+
+  html, body { height: 100%; }
+
+  body {
+    background: var(--bg);
+    font-family: var(--font);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  /* Header */
+  header {
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .logo { display: flex; align-items: center; gap: 10px; }
+
+  .logo-icon {
+    width: 36px; height: 36px;
+    background: var(--accent);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.05rem; color: white; font-weight: 700;
+    direction: rtl;
+  }
+
+  .logo-text { font-size: 1rem; font-weight: 700; color: var(--text); letter-spacing: -0.02em; direction: ltr; }
+  .logo-sub { font-size: 0.71rem; color: var(--text-dim); font-weight: 400; display: block; margin-top: -2px; direction: rtl; }
+
+  .header-right { display: flex; gap: 8px; align-items: center; direction: ltr; }
+
+  .pill {
+    padding: 5px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 500;
+    cursor: pointer; border: 1px solid var(--border); background: transparent;
+    color: var(--text-mid); font-family: var(--font); transition: all 0.15s;
+    direction: ltr;
+  }
+  .pill:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+
+  /* Main */
+  main {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; padding: 28px 20px 40px; gap: 18px;
+  }
+
+  /* Editor card */
+  .editor-card {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 16px; width: 100%; max-width: 880px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.05); overflow: hidden;
+    transition: background 0.3s, border-color 0.3s;
+    animation: fadeUp 0.35s ease both;
+  }
+
+  .editor-toolbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; border-bottom: 1px solid var(--border);
+    background: var(--bg); transition: background 0.3s, border-color 0.3s;
+  }
+
+  .editor-label {
+    font-size: 0.74rem; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 0.08em; text-transform: uppercase; direction: ltr;
+  }
+
+  .toolbar-btns { display: flex; gap: 6px; direction: ltr; }
+
+  .tbtn {
+    padding: 5px 14px; border-radius: 7px; font-size: 0.78rem; font-weight: 600;
+    cursor: pointer; border: 1px solid var(--border); background: var(--white);
+    color: var(--text-mid); font-family: var(--font); transition: all 0.12s;
+    display: flex; align-items: center; gap: 5px; direction: ltr;
+  }
+  .tbtn:hover { background: var(--accent-light); border-color: var(--accent); color: var(--accent); }
+  .tbtn.danger:hover { background: #fef2f0; border-color: var(--accent2); color: var(--accent2); }
+  .tbtn.primary { background: var(--accent); border-color: var(--accent); color: white; }
+  .tbtn.primary:hover { filter: brightness(1.1); }
+
+  textarea {
+    width: 100%; min-height: 120px; border: none; outline: none;
+    resize: vertical; padding: 18px 20px;
+    font-family: var(--font); font-size: 1.35rem; line-height: 1.9;
+    color: var(--text); direction: rtl; background: transparent;
+    caret-color: var(--accent); transition: color 0.3s, background 0.3s;
+  }
+  textarea::placeholder { color: var(--text-dim); }
+
+  .editor-footer {
+    padding: 8px 16px; border-top: 1px solid var(--border);
+    background: var(--bg); display: flex; align-items: center; gap: 12px;
+    direction: ltr; transition: background 0.3s, border-color 0.3s;
+  }
+
+  .char-count { font-size: 0.75rem; color: var(--text-dim); }
+
+  .status-chips { display: flex; gap: 6px; margin-left: auto; }
+
+  .chip {
+    font-size: 0.7rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 12px; border: 1px solid var(--border);
+    background: transparent; color: var(--text-dim);
+    transition: all 0.15s; letter-spacing: 0.05em; direction: ltr;
+  }
+  .chip.on { background: var(--accent); border-color: var(--accent); color: white; }
+
+  /* Keyboard */
+  .keyboard-wrap {
+    width: 100%; max-width: 880px;
+    animation: fadeUp 0.35s 0.07s ease both;
+  }
+
+  .keyboard {
+    background: var(--keyboard-bg); border-radius: 16px;
+    padding: 14px; display: flex; flex-direction: column; gap: 8px;
+    direction: ltr;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+    border: 1px solid #ccd0da;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .row { display: flex; gap: 6px; justify-content: center; }
+
+  .key {
+    background: var(--key-bg); border: none; border-radius: var(--radius);
+    color: var(--text); cursor: pointer; min-width: 52px; height: 52px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-family: var(--font); font-size: 1.15rem; font-weight: 500;
+    position: relative; user-select: none; padding: 0 8px;
+    box-shadow: var(--shadow-key);
+    transition: background 0.08s, box-shadow 0.08s, transform 0.06s, color 0.3s;
+  }
+  .key:hover { background: var(--key-hover); box-shadow: var(--shadow-key-hover); transform: translateY(-1px); }
+  .key:active, .key.pressed { background: var(--key-active); box-shadow: var(--shadow-key-press); transform: translateY(2px); }
+
+  .key .shift-char {
+    font-size: 0.6rem; color: var(--accent); font-weight: 700;
+    position: absolute; top: 5px; left: 6px; line-height: 1;
+  }
+  .key .main-char { font-size: 1.15rem; line-height: 1; }
+
+  .key .phys-label {
+    font-size: 0.72rem; font-weight: 800;
+    color: #2a9d5c;
+    font-family: Arial, sans-serif;
+    position: absolute; bottom: 4px; right: 5px;
+    line-height: 1; letter-spacing: 0;
+    text-transform: uppercase;
+  }
+
+  .key.special {
+    background: var(--key-special-bg); color: var(--text-mid);
+    font-size: 0.74rem; font-weight: 600; min-width: 68px; letter-spacing: 0.01em;
+  }
+  .key.special:hover { background: var(--key-special-hover); }
+  .key.special:active, .key.special.pressed { filter: brightness(0.92); }
+
+  .key.shift-key { min-width: 90px; }
+  .key.shift-key.active { background: var(--accent); color: white; box-shadow: 0 2px 0 #1e3aaa; }
+  .key.shift-key.active:hover { filter: brightness(1.08); }
+
+  .key.backspace { min-width: 90px; }
+  .key.enter { min-width: 96px; }
+  .key.tab { min-width: 76px; }
+  .key.caps { min-width: 90px; }
+  .key.caps.active { background: var(--accent); color: white; box-shadow: 0 2px 0 #1e3aaa; }
+
+  .key.space {
+    flex: 1; max-width: 300px; font-size: 0.72rem;
+    color: var(--text-dim); letter-spacing: 0.04em;
+  }
+
+  /* Toast */
+  .toast {
+    position: fixed; bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(16px);
+    background: #1c1e2e; color: white;
+    padding: 10px 24px; border-radius: 30px;
+    font-size: 0.84rem; font-weight: 500;
+    opacity: 0; pointer-events: none;
+    transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 100; direction: ltr; white-space: nowrap;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Footer */
+  footer {
+    text-align: center; padding: 16px;
+    font-size: 0.74rem; color: var(--text-dim); direction: ltr;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  @keyframes fadeUp {
+    from { opacity:0; transform: translateY(14px); }
+    to   { opacity:1; transform: translateY(0); }
+  }
+
+  /* ── Autocomplete bar ── */
+  .autocomplete-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 16px; border-bottom: 1px solid var(--border);
+    background: var(--bg); min-height: 40px;
+    direction: rtl; overflow-x: auto; overflow-y: hidden;
+    scrollbar-width: none; transition: background 0.3s, border-color 0.3s;
+  }
+  .autocomplete-bar::-webkit-scrollbar { display: none; }
+  .autocomplete-bar.empty { opacity: 0.35; pointer-events: none; }
+  .ac-label {
+    font-size: 0.65rem; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 0.07em; text-transform: uppercase;
+    white-space: nowrap; direction: ltr; flex-shrink: 0;
+  }
+  .ac-chip {
+    padding: 4px 14px; border-radius: 20px; font-size: 1rem;
+    background: var(--white); border: 1px solid var(--border);
+    color: var(--text); cursor: pointer; white-space: nowrap; flex-shrink: 0;
+    font-family: var(--font); font-weight: 500;
+    transition: all 0.12s; direction: rtl;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .ac-chip:hover { background: var(--accent); border-color: var(--accent); color: white; }
+  .ac-chip.top { border-color: var(--accent); color: var(--accent); font-weight: 700; }
+  .ac-chip.top:hover { background: var(--accent); color: white; }
+
+  /* ── Diacritics toolbar ── */
+  .diacritics-wrap {
+    width: 100%; max-width: 880px;
+    animation: fadeUp 0.35s 0.04s ease both;
+  }
+  .diacritics-bar {
+    background: var(--white); border: 1px solid var(--border);
+    border-radius: 14px; padding: 10px 16px;
+    display: flex; align-items: center; gap: 8px;
+    direction: ltr; flex-wrap: wrap;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .diac-label {
+    font-size: 0.65rem; font-weight: 700; color: var(--text-dim);
+    letter-spacing: 0.08em; text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+  }
+  .diac-separator { width: 1px; height: 28px; background: var(--border); margin: 0 2px; flex-shrink: 0; }
+  .diac-btn {
+    background: var(--key-bg); border: 1px solid var(--border);
+    border-radius: 9px; cursor: pointer;
+    font-family: var(--font); color: var(--text);
+    width: 52px; height: 44px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    position: relative; user-select: none;
+    box-shadow: 0 2px 0 #b0b5c8;
+    transition: all 0.1s;
+  }
+  .diac-btn:hover { background: var(--key-hover); border-color: var(--accent); transform: translateY(-1px); box-shadow: 0 3px 0 #9da3ba; }
+  .diac-btn:active { transform: translateY(2px); box-shadow: none; }
+  .diac-preview { font-size: 1.2rem; line-height: 1; }
+  .diac-name { font-size: 0.46rem; color: var(--text-dim); font-family: Arial, sans-serif; position: absolute; bottom: 3px; line-height: 1; white-space: nowrap; }
+
+  /* Mobile adjustments for new elements */
+  @media (max-width: 768px) {
+    .ac-chip { font-size: 0.9rem; padding: 3px 10px; }
+    .diac-btn { width: 40px; height: 36px; }
+    .diac-preview { font-size: 1rem; }
+    .diac-name { font-size: 0.4rem; }
+  }
+  @media (max-width: 768px) {
+    /* Prevent iOS bounce / zoom */
+    html { overflow: hidden; height: 100%; }
+    body { overflow: hidden; height: 100%; }
+
+    header { padding: 0 12px; height: 48px; }
+    .logo-icon { width: 30px; height: 30px; font-size: 0.9rem; }
+    .logo-text { font-size: 0.88rem; }
+    .logo-sub { display: none; }
+    .pill { padding: 4px 10px; font-size: 0.72rem; }
+
+    main {
+      padding: 8px 4px 6px;
+      gap: 8px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      height: calc(100vh - 48px);
+    }
+
+    /* Compact editor */
+    .editor-card { border-radius: 10px; }
+    .editor-toolbar { padding: 7px 10px; }
+    .editor-label { display: none; }
+    .tbtn { padding: 5px 10px; font-size: 0.72rem; gap: 3px; }
+    textarea { min-height: 70px; font-size: 1.1rem; padding: 10px 12px; resize: none; }
+    .editor-footer { padding: 5px 10px; }
+    .char-count { font-size: 0.68rem; }
+    .chip { font-size: 0.62rem; padding: 2px 7px; }
+
+    /* Keyboard scales with viewport width */
+    .keyboard { padding: 6px; gap: 4px; border-radius: 10px; }
+    .row { gap: 3px; }
+
+    .key {
+      min-width: 0 !important;
+      width: calc((100vw - 56px) / 14);
+      height: calc((100vw - 56px) / 14);
+      max-height: 44px;
+      font-size: 1rem;
+      padding: 0 2px;
+      border-radius: 6px;
+    }
+
+    .key .main-char { font-size: 1rem; }
+    .key .shift-char { font-size: 0.48rem; top: 3px; left: 3px; }
+    .key .phys-label { font-size: 0.5rem; bottom: 2px; right: 2px; }
+
+    .key.special {
+      width: calc((100vw - 56px) / 10) !important;
+      font-size: 0.58rem;
+      padding: 0 3px;
+    }
+
+    .key.space {
+      flex: 1 !important;
+      max-width: none !important;
+      width: auto !important;
+      font-size: 0.62rem;
+    }
+
+    .key.backspace  { width: calc((100vw - 56px) / 9) !important; font-size: 0.7rem; }
+    .key.enter      { width: calc((100vw - 56px) / 8) !important; font-size: 0.58rem; }
+    .key.shift-key  { width: calc((100vw - 56px) / 8) !important; font-size: 0.58rem; }
+    .key.caps       { width: calc((100vw - 56px) / 8) !important; font-size: 0.58rem; }
+    .key.tab        { width: calc((100vw - 56px) / 9) !important; font-size: 0.58rem; }
+
+    footer { display: none; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 380px) {
+    .key { height: calc((100vw - 40px) / 14); max-height: 36px; }
+    .key .main-char { font-size: 0.85rem; }
+    .tbtn span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">ع</div>
+    <div>
+      <span class="logo-text">Arabic Keyboard</span>
+      <span class="logo-sub">لوحة المفاتيح العربية</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="pill" id="themeBtn" onclick="toggleTheme()">🌙 Dark Mode</button>
+  </div>
+</header>
+
+<main>
+
+  <div class="editor-card">
+    <div class="editor-toolbar">
+      <span class="editor-label">Output</span>
+      <div class="toolbar-btns">
+        <button class="tbtn danger" onclick="clearText()">✕ Clear</button>
+        <button class="tbtn" onclick="copyText()">⎘ Copy</button>
+        <button class="tbtn primary" onclick="searchGoogle()">🔍 Search With Google</button>
+      </div>
+    </div>
+    <!-- Autocomplete suggestions -->
+    <div class="autocomplete-bar empty" id="acBar">
+      <span class="ac-label">Suggestions</span>
+      <div id="acChips" style="display:flex;gap:6px;"></div>
+    </div>
+
+    <textarea id="output" placeholder="ابدأ الكتابة هنا..."></textarea>
+    <div class="editor-footer">
+      <span class="char-count" id="charCount">0 characters</span>
+      <div class="status-chips">
+        <span class="chip" id="shiftChip">SHIFT</span>
+        <span class="chip" id="capsChip">CAPS</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Diacritics toolbar -->
+  <div class="diacritics-wrap">
+    <div class="diacritics-bar">
+      <span class="diac-label">Diacritics</span>
+      <div class="diac-separator"></div>
+      <div id="diacBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+  </div>
+
+  <div class="keyboard-wrap">
+    <div class="keyboard" id="keyboard"></div>
+  </div>
+
+</main>
+
+<footer>Arabic On-Screen Keyboard &nbsp;·&nbsp; Full Arabic character set with diacritics &amp; shift layer</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Physical key mappings (must be declared first) ──
+const physicalMap = {
+  "a":"ش","b":"لا","c":"ؤ","d":"ي","e":"ث","f":"ب","g":"ل","h":"ا",
+  "i":"ه","j":"ت","k":"ن","l":"م","m":"ة","n":"ى","o":"خ","p":"ح",
+  "q":"ض","r":"ق","s":"س","t":"ف","u":"ع","v":"ر","w":"ص","x":"ء",
+  "y":"غ","z":"ئ",
+  "`":"ذ","[":"ج","]":"د",";":"ك","'":"ط",",":"و",".":"ز","/":"ظ"
+};
+
+const physicalShiftMap = {
+  "a":"ِ","b":"لآ","c":"ة","d":"]","e":"ُ","f":"[","g":"لأ","h":"أ",
+  "i":"÷","j":"ـ","k":"،","l":"/","m":"»","n":"آ","o":"×","p":"؛",
+  "q":"َ","r":"ٌ","s":"ٍ","t":"`","u":"`","v":"ّ","w":"ً","x":"ْ",
+  "y":"إ","z":"~"
+};
+
+// Reverse lookup: arabic char -> physical key label
+const arabicToPhys = {};
+Object.entries(physicalMap).forEach(([phys, arabic]) => {
+  arabicToPhys[arabic] = phys.length === 1 && phys >= 'a' && phys <= 'z' ? phys.toUpperCase() : phys;
+});
+
+// ── Keyboard layout rows ──
+const rows = [
+  [
+    ['ذ','~'],['١','!'],['٢','@'],['٣','#'],['٤','$'],
+    ['٥','%'],['٦','^'],['٧','&'],['٨','*'],['٩','('],
+    ['٠',')'],['–','_'],['=','+'],
+    {label:'⌫ Backspace', cls:'backspace special', action:'backspace'}
+  ],
+  [
+    {label:'Tab ⇥', cls:'tab special', action:'tab'},
+    ['ض','َ'],['ص','ً'],['ث','ُ'],['ق','ٌ'],['ف','لإ'],
+    ['غ','إ'],['ع','`'],['ه','÷'],['خ','×'],['ح','؛'],
+    ['ج','>'],['د','<'],['\\','|']
+  ],
+  [
+    {label:'Caps Lock', cls:'caps special', action:'caps'},
+    ['ش','ِ'],['س','ٍ'],['ي',']'],['ب','['],['ل','لأ'],
+    ['ا','أ'],['ت','ـ'],['ن','،'],['م','/'],['ك',':'],['ط','"'],
+    {label:'Enter ↵', cls:'enter special', action:'enter'}
+  ],
+  [
+    {label:'⇧ Shift', cls:'shift-key special', action:'shift'},
+    ['ئ','~'],['ء','ْ'],['ؤ','ة'],['ر','ّ'],['لا','لآ'],
+    ['ى','آ'],['ة','»'],['و','«'],['ز','؟'],['ظ','.'],
+    {label:'Shift ⇧', cls:'shift-key special', action:'shift'}
+  ],
+  [
+    {label:'?١٢٣', cls:'special', action:'noop'},
+    {label:'Space Bar  —  مسافة', cls:'space special', action:'space'},
+    {label:'ع AR', cls:'special', action:'noop'}
+  ]
+];
+
+let shiftOn = false, capsOn = false, darkMode = false;
+
+function buildKeyboard() {
+  const kb = document.getElementById('keyboard');
+  rows.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'row';
+    row.forEach(key => {
+      const btn = document.createElement('button');
+      btn.className = 'key ' + (key.cls || '');
+      if (Array.isArray(key)) {
+        const [n, s] = key;
+        const phys = arabicToPhys[n] || '';
+        btn.innerHTML = `<span class="shift-char">${s}</span><span class="main-char">${n}</span>${phys ? `<span class="phys-label">${phys}</span>` : ''}`;
+        btn.dataset.normal = n; btn.dataset.shift = s;
+        btn.addEventListener('pointerdown', e => { e.preventDefault(); typeChar(btn); });
+      } else {
+        btn.textContent = key.label;
+        btn.dataset.action = key.action;
+        btn.addEventListener('pointerdown', e => { e.preventDefault(); handleAction(key.action, btn); });
+      }
+      rowEl.appendChild(btn);
+    });
+    kb.appendChild(rowEl);
+  });
+}
+
+function typeChar(btn) {
+  const ta = document.getElementById('output');
+  insertAt(ta, shiftOn ? btn.dataset.shift : btn.dataset.normal);
+  anim(btn);
+  if (shiftOn && !capsOn) { shiftOn = false; refreshShift(); }
+  updateCount();
+  triggerAC();
+}
+
+function handleAction(action, btn) {
+  const ta = document.getElementById('output');
+  if (btn) anim(btn);
+  if (action === 'backspace') {
+    const s = ta.selectionStart, e = ta.selectionEnd;
+    if (s !== e) insertAt(ta,'');
+    else if (s > 0) { ta.value = ta.value.slice(0,s-1)+ta.value.slice(s); ta.selectionStart=ta.selectionEnd=s-1; }
+    ta.focus();
+  } else if (action === 'space') insertAt(ta,' ');
+  else if (action === 'enter') insertAt(ta,'\n');
+  else if (action === 'tab')   insertAt(ta,'\t');
+  else if (action === 'shift') { shiftOn=!shiftOn; refreshShift(); }
+  else if (action === 'caps')  { capsOn=!capsOn; shiftOn=capsOn; refreshShift(); refreshCaps(); }
+  updateCount();
+  triggerAC();
+}
+
+function insertAt(el, text) {
+  const s=el.selectionStart, e=el.selectionEnd;
+  el.value = el.value.slice(0,s)+text+el.value.slice(e);
+  el.selectionStart=el.selectionEnd=s+text.length;
+  el.focus();
+}
+
+function anim(btn) { if(!btn) return; btn.classList.add('pressed'); setTimeout(()=>btn.classList.remove('pressed'),120); }
+
+function refreshShift() {
+  document.querySelectorAll('[data-action="shift"]').forEach(b=>b.classList.toggle('active',shiftOn));
+  document.getElementById('shiftChip').classList.toggle('on',shiftOn);
+  document.querySelectorAll('.key .main-char').forEach(el=>{
+    const b=el.closest('.key');
+    if(b.dataset.normal!==undefined) el.textContent=shiftOn?b.dataset.shift:b.dataset.normal;
+  });
+}
+
+function refreshCaps() {
+  document.querySelectorAll('[data-action="caps"]').forEach(b=>b.classList.toggle('active',capsOn));
+  document.getElementById('capsChip').classList.toggle('on',capsOn);
+}
+
+function updateCount() {
+  const n=document.getElementById('output').value.length;
+  document.getElementById('charCount').textContent=`${n} character${n!==1?'s':''}`;
+}
+
+function clearText() {
+  document.getElementById('output').value='';
+  updateCount();
+  document.getElementById('acChips').innerHTML='';
+  document.getElementById('acBar').classList.add('empty');
+  document.getElementById('output').focus();
+}
+
+function copyText() {
+  const v=document.getElementById('output').value;
+  if(!v){showToast('Nothing to copy');return;}
+  navigator.clipboard.writeText(v).then(()=>showToast('Copied ✓')).catch(()=>{
+    document.getElementById('output').select();document.execCommand('copy');showToast('Copied ✓');
+  });
+}
+
+function searchGoogle() {
+  const v=document.getElementById('output').value.trim();
+  if(!v){showToast('Nothing to search');return;}
+  window.open('https://www.google.com/search?q='+encodeURIComponent(v), '_blank');
+}
+
+function showToast(msg) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function toggleTheme() {
+  darkMode=!darkMode;
+  const r=document.documentElement.style;
+  if(darkMode){
+    r.setProperty('--bg','#10121c');
+    r.setProperty('--white','#181b28');
+    r.setProperty('--keyboard-bg','#1e2130');
+    r.setProperty('--key-bg','#282d42');
+    r.setProperty('--key-hover','#30364f');
+    r.setProperty('--key-active','#383f58');
+    r.setProperty('--key-special-bg','#16192a');
+    r.setProperty('--key-special-hover','#1e2235');
+    r.setProperty('--accent','#6b8cff');
+    r.setProperty('--accent-light','rgba(107,140,255,0.13)');
+    r.setProperty('--text','#e4e8f8');
+    r.setProperty('--text-mid','#8890b8');
+    r.setProperty('--text-dim','#484e70');
+    r.setProperty('--border','#242840');
+    r.setProperty('--shadow-key','0 2px 0 #0c0e1a');
+    r.setProperty('--shadow-key-hover','0 3px 0 #090b16');
+    r.setProperty('--shadow-key-press','0 0px 0 #0c0e1a');
+    document.getElementById('themeBtn').textContent='☀ Light Mode';
+  } else {
+    r.setProperty('--bg','#f7f8fa');
+    r.setProperty('--white','#ffffff');
+    r.setProperty('--keyboard-bg','#e8eaee');
+    r.setProperty('--key-bg','#ffffff');
+    r.setProperty('--key-hover','#f0f2ff');
+    r.setProperty('--key-active','#dde0f0');
+    r.setProperty('--key-special-bg','#d1d5df');
+    r.setProperty('--key-special-hover','#c4c8d4');
+    r.setProperty('--accent','#3354d4');
+    r.setProperty('--accent-light','#eef1fd');
+    r.setProperty('--text','#1c1e2e');
+    r.setProperty('--text-mid','#4a4f6a');
+    r.setProperty('--text-dim','#9399b8');
+    r.setProperty('--border','#e0e3ee');
+    r.setProperty('--shadow-key','0 2px 0 #b0b5c8');
+    r.setProperty('--shadow-key-hover','0 3px 0 #9da3ba');
+    r.setProperty('--shadow-key-press','0 0px 0 #b0b5c8');
+    document.getElementById('themeBtn').textContent='🌙 Dark Mode';
+  }
+}
+
+// ── Diacritics ─────────────────────────────────────────
+const diacritics = [
+  { char: '\u064E', name: 'فتحة',       preview: 'بَ' },
+  { char: '\u064B', name: 'تنوين فتح', preview: 'بً' },
+  { char: '\u064F', name: 'ضمة',        preview: 'بُ' },
+  { char: '\u064C', name: 'تنوين ضم',  preview: 'بٌ' },
+  { char: '\u0650', name: 'كسرة',       preview: 'بِ' },
+  { char: '\u064D', name: 'تنوين كسر', preview: 'بٍ' },
+  { char: '\u0652', name: 'سكون',       preview: 'بْ' },
+  { char: '\u0651', name: 'شدة',        preview: 'بّ' },
+  { char: '\u0651\u064E', name: 'شدة+فتحة', preview: 'بَّ' },
+  { char: '\u0651\u064F', name: 'شدة+ضمة',  preview: 'بُّ' },
+  { char: '\u0651\u0650', name: 'شدة+كسرة', preview: 'بِّ' },
+  { char: '\u0640',       name: 'تطويل',     preview: 'ـ'  },
+];
+
+function buildDiacritics() {
+  const container = document.getElementById('diacBtns');
+  diacritics.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'diac-btn';
+    btn.title = d.name;
+    btn.innerHTML = `<span class="diac-preview">${d.preview}</span><span class="diac-name">${d.name}</span>`;
+    btn.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      insertAt(document.getElementById('output'), d.char);
+      updateCount(); triggerAC();
+    });
+    container.appendChild(btn);
+  });
+}
+
+// ── Autocomplete ───────────────────────────────────────
+const wordList = [
+  'السلام','عليكم','ورحمة','الله','وبركاته','بسم','الرحمن','الرحيم',
+  'الحمد','رب','العالمين','مرحبا','شكرا','جزيلاً','أهلاً','وسهلاً',
+  'كيف','حالك','بخير','الحمدلله','إن','شاء','يوم','سعيد','مع','السلامة',
+  'نعم','لا','من','فضلك','عفواً','آسف','صباح','الخير','مساء','النور',
+  'الوطن','الأمة','الشعب','الحكومة','المدرسة','الجامعة','البيت','المنزل',
+  'الأسرة','الأم','الأب','الأخ','الأخت','الابن','البنت','الصديق',
+  'العمل','المكتب','الكتاب','القلم','الورقة','الطاولة','الكرسي',
+  'الماء','الطعام','الخبز','القهوة','الشاي','الحليب','الفاكهة',
+  'الطريق','السيارة','الحافلة','المطار','المحطة','المستشفى','الصيدلية',
+  'كبير','صغير','جديد','قديم','جميل','سريع','بطيء','قريب','بعيد',
+  'اليوم','غداً','أمس','الآن','هنا','هناك','لماذا','متى','أين',
+  'أريد','أحتاج','أعرف','أفهم','أتكلم','أكتب','أقرأ','أسمع','أرى',
+  'ذهب','جاء','قال','فعل','أكل','شرب','نام','قام','عمل','درس',
+  'هذا','هذه','ذلك','تلك','الذي','التي','وهو','وهي','وهم',
+  'لكن','بعد','قبل','على','في','إلى','عن','حتى','أو','إذا',
+  'مدينة','قرية','دولة','عاصمة','شارع','حديقة','مسجد','كنيسة',
+  'طالب','معلم','طبيب','مهندس','محامي','تاجر','فلاح','موظف',
+  'سعادة','حزن','فرح','غضب','خوف','أمل','حب','كراهية','صداقة',
+];
+
+let acDebounce = null;
+function triggerAC() {
+  clearTimeout(acDebounce);
+  acDebounce = setTimeout(runAC, 130);
+}
+
+function runAC() {
+  const ta = document.getElementById('output');
+  const before = ta.value.slice(0, ta.selectionStart);
+  const match = before.match(/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]+$/);
+  const word = match ? match[0] : '';
+  const bar = document.getElementById('acBar');
+  const chips = document.getElementById('acChips');
+  chips.innerHTML = '';
+
+  if (word.length < 2) { bar.classList.add('empty'); return; }
+
+  const starts   = wordList.filter(w => w.startsWith(word) && w !== word);
+  const contains = wordList.filter(w => !w.startsWith(word) && w.includes(word));
+  const results  = [...starts, ...contains].slice(0, 7);
+
+  if (!results.length) { bar.classList.add('empty'); return; }
+
+  bar.classList.remove('empty');
+  results.forEach((suggestion, i) => {
+    const chip = document.createElement('button');
+    chip.className = 'ac-chip' + (i === 0 ? ' top' : '');
+    chip.textContent = suggestion;
+    chip.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      const pos = ta.selectionStart;
+      const start = pos - word.length;
+      ta.value = ta.value.slice(0, start) + suggestion + ' ' + ta.value.slice(pos);
+      ta.selectionStart = ta.selectionEnd = start + suggestion.length + 1;
+      ta.focus();
+      updateCount();
+      chips.innerHTML = '';
+      bar.classList.add('empty');
+    });
+    chips.appendChild(chip);
+  });
+}
+
+buildDiacritics();
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Shift') { shiftOn = true; refreshShift(); return; }
+  if (e.ctrlKey || e.metaKey || e.altKey) return;
+
+  const ta = document.getElementById('output');
+
+  if (e.key === 'Backspace') { e.preventDefault(); handleAction('backspace', null); return; }
+  if (e.key === 'Enter')     { e.preventDefault(); handleAction('enter', null); return; }
+  if (e.key === ' ')         { e.preventDefault(); handleAction('space', null); return; }
+  if (e.key === 'Tab') {
+    const topChip = document.querySelector('#acChips .ac-chip.top');
+    if (topChip) { e.preventDefault(); topChip.dispatchEvent(new PointerEvent('pointerdown', {bubbles:true})); return; }
+  }
+
+  const isShift = e.shiftKey;
+  const k = e.key.length === 1 ? e.key.toLowerCase() : e.key;
+  const arabic = isShift ? physicalShiftMap[k] : physicalMap[k];
+
+  if (arabic) {
+    e.preventDefault();
+    insertAt(ta, arabic);
+    updateCount();
+    triggerAC();
+    const btn = [...document.querySelectorAll('.key')].find(b =>
+      isShift ? b.dataset.shift === arabic : b.dataset.normal === arabic
+    );
+    if (btn) anim(btn);
+  }
+});
+
+document.addEventListener('keyup', e => {
+  if (e.key === 'Shift' && !capsOn) { shiftOn = false; refreshShift(); }
+});
+
+document.getElementById('output').addEventListener('input', () => { updateCount(); triggerAC(); });
+
+// Register service worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+buildKeyboard();
+</script>
+</body>
+</html>
