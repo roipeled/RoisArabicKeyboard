@@ -2,7 +2,7 @@
   "name": "Arabic Keyboard — لوحة المفاتيح العربية",
   "short_name": "Arabic KB",
   "description": "Arabic on-screen keyboard with full character set and diacritics",
-  "start_url": "./arabic-keyboard.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f7f8fa",
   "theme_color": "#3354d4",
