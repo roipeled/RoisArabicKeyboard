@@ -6,7 +6,7 @@ For Those Who Want, You can Type THe Equivelint Letter In the English Keyboard F
 
 Built By Claude, I'm not a Developer
 
-המקדלת בערבית על המשך של רואי
+המקדלת בערבית על המסך של רואי
 
 מיועד לאנשים שרוצים מקלדת בערבית במחשב אבל לא רוצים שפה שלמה בין המקלדות
 
