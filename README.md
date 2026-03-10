@@ -2,7 +2,7 @@ Roi's Arabic OnScreen Keyboard
 
 Meant For People Who Want an Arabic Keyboard But Doesn't Want A Whole Layout On Their PC
 
-For Those Who Want, You can Type THe Equivelint Letter In the English Keyboard For The Arabic One. (G = ل For Example), Just Like The OnScreen Keyboard In Google Translate. You Can See The Equivelnt Key As it Written in Green In the Keyboard.
+For Those Who Want, You can Type The Equivelint Letter In the English Keyboard For The Arabic One. (G = ل For Example), Just Like The OnScreen Keyboard In Google Translate. You Can See The Equivelnt Key As it Written in Green In the Keyboard.
 
 Built By Claude, I'm not a Developer
 
